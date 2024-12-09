@@ -1,0 +1,13 @@
+header:
+  title: "SimWrapper Dashboard by..."
+  tab: "Tab 1"
+  description: "Data Science 2024/2025 class"
+  fullscreen: true
+
+layout:
+    # You can remove this row once you have your own dashboard sections
+    row2:
+      - type: text
+        title: "Getting started"
+        file: README.md
+

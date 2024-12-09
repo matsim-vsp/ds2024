@@ -1,0 +1,25 @@
+quality,road_type,n,share
+major under,primary,2.0,0.025
+major under,secondary,5.0,0.045871559633027525
+major under,motorway_link,8.0,0.1951219512195122
+under,trunk,1.0,0.1111111111111111
+under,motorway_link,3.0,0.07317073170731707
+under,secondary,4.0,0.03669724770642202
+ok,motorway,1.0,0.045454545454545456
+ok,trunk_link,1.0,1.0
+ok,tertiary,2.0,0.15384615384615385
+ok,trunk,2.0,0.2222222222222222
+ok,primary,3.0,0.0375
+ok,motorway_link,4.0,0.0975609756097561
+ok,secondary,4.0,0.03669724770642202
+over,trunk,1.0,0.1111111111111111
+over,motorway_link,2.0,0.04878048780487805
+over,primary,3.0,0.0375
+over,motorway,5.0,0.22727272727272727
+over,secondary,5.0,0.045871559633027525
+major over,trunk,5.0,0.5555555555555556
+major over,tertiary,11.0,0.8461538461538461
+major over,motorway,16.0,0.7272727272727273
+major over,motorway_link,24.0,0.5853658536585366
+major over,primary,72.0,0.9
+major over,secondary,91.0,0.8348623853211009

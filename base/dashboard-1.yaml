@@ -1,0 +1,583 @@
+header:
+  title: Trips
+  description: General information about modal share and trip distributions.
+subtabs:
+- title: Trips
+  rows:
+  - first
+  - second
+  - third
+  - departures
+  - arrivals
+- title: By Groups
+  rows:
+  - category_header_age
+  - category_1_age
+  - category_2_age
+  - category_header_income
+  - category_1_income
+  - category_2_income
+  - category_header_employment
+  - category_1_employment
+  - category_2_employment
+  - category_header_economic_status
+  - category_1_economic_status
+  - category_2_economic_status
+- title: Mode Choice
+  rows:
+  - choice-intro
+  - choice
+  - choice-plots
+layout:
+  first:
+  - type: plotly
+    title: Modal split
+    datasets:
+      dataset:
+        file: analysis/population/mode_share.csv
+        constant:
+          source: Simulated
+        aggregate:
+          target: share
+          groupBy:
+          - main_mode
+          func: SUM
+      modeshareref:
+        file: analysis/resources/mode_share_ref.csv
+        constant:
+          source: Reference
+        aggregate:
+          target: share
+          groupBy:
+          - main_mode
+          func: SUM
+    traces:
+    - x: $dataset.share
+      "y": $dataset.source
+      orientation: h
+      type: bar
+      name: $dataset.main_mode
+    layout:
+      barmode: stack
+    mergeDatasets: true
+  - type: plotly
+    title: Trip distance distribution
+    datasets:
+      dataset:
+        file: analysis/population/mode_share.csv
+        aggregate:
+          target: share
+          groupBy:
+          - dist_group
+          func: SUM
+      modeshareref:
+        file: analysis/resources/mode_share_ref.csv
+        aggregate:
+          target: share
+          groupBy:
+          - dist_group
+          func: SUM
+    traces:
+    - x: $dataset.dist_group
+      "y": $dataset.share
+      orientation: v
+      type: bar
+      name: Simulated
+      original_name: Simulated
+    - x: $modeshareref.dist_group
+      "y": $modeshareref.share
+      orientation: v
+      type: bar
+      name: Reference
+      original_name: Reference
+    colorRamp: Viridis
+  second:
+  - type: csv
+    title: Mode Statistics
+    description: "by main mode, over whole trip (including access & egress)"
+    dataset: analysis/population/trip_stats.csv
+    showAllRows: true
+  - type: plotly
+    title: Modal distance distribution
+    datasets:
+      dataset:
+        file: analysis/population/mode_share_per_dist.csv
+        constant:
+          source: Sim
+      modeshareperdistref:
+        file: analysis/resources/mode_share_per_dist_ref.csv
+        constant:
+          source: Ref
+    traces:
+    - x: $dataset.dist_group
+      "y": $dataset.share
+      orientation: v
+      type: bar
+      name: $dataset.main_mode
+    layout:
+      xaxis:
+        title: Distance group
+        color: "#444"
+        type: '-'
+      barmode: stack
+      yaxis:
+        title: Share
+        color: "#444"
+        type: '-'
+    mergeDatasets: true
+    multiIndex:
+      dist_group: source
+  third:
+  - type: csv
+    title: Population statistics
+    description: over simulated persons (not scaled by sample size)
+    dataset: analysis/population/population_trip_stats.csv
+    showAllRows: true
+  - type: plotly
+    title: Mode usage
+    description: Share of persons using a main mode at least once per day.
+    datasets:
+      dataset:
+        file: analysis/population/mode_users.csv
+        constant:
+          source: sim
+      modeusersref:
+        file: analysis/resources/mode_users_ref.csv
+        constant:
+          source: ref
+    traces:
+    - x: $dataset.main_mode
+      "y": $dataset.user
+      orientation: v
+      type: bar
+      name: $dataset.main_mode
+    width: 2.0
+    mergeDatasets: true
+    multiIndex:
+      main_mode: source
+  departures:
+  - type: plotly
+    title: Departures
+    description: by hour and purpose
+    datasets:
+      dataset: analysis/population/trip_purposes_by_hour.csv
+    traces:
+    - x: $dataset.h
+      "y": $dataset.departure
+      orientation: v
+      type: bar
+      name: $dataset.purpose
+      colorRamp: Spectral
+    layout:
+      xaxis:
+        title: Hour
+        color: "#444"
+        type: '-'
+      barmode: stack
+      yaxis:
+        title: Share
+        color: "#444"
+        type: '-'
+  arrivals:
+  - type: plotly
+    title: Arrivals
+    description: by hour and purpose
+    datasets:
+      dataset: analysis/population/trip_purposes_by_hour.csv
+    traces:
+    - x: $dataset.h
+      "y": $dataset.arrival
+      orientation: v
+      type: bar
+      name: $dataset.purpose
+      colorRamp: Spectral
+    layout:
+      xaxis:
+        title: Hour
+        color: "#444"
+        type: '-'
+      barmode: stack
+      yaxis:
+        title: Share
+        color: "#444"
+        type: '-'
+  category_header_age:
+  - type: text
+    backgroundColor: transparent
+    content: "## **Age**"
+  category_1_age:
+  - type: plotly
+    title: Mode share
+    description: by age
+    datasets:
+      dataset:
+        file: analysis/population/mode_share_per_age.csv
+        pivot:
+          namesTo: source
+          valuesTo: share
+          exclude:
+          - main_mode
+          - dist_group
+          - age
+        aggregate:
+          target: share
+          groupBy:
+          - main_mode
+          - source
+          - age
+          func: SUM
+        rename:
+          sim_share: Sim
+          ref_share: Ref
+    traces:
+    - x: $dataset.source
+      "y": $dataset.share
+      orientation: v
+      type: bar
+      name: $dataset.main_mode
+      facet_col: $dataset.age
+    layout:
+      barmode: stack
+    height: 6.0
+  category_2_age:
+  - type: plotly
+    title: Modal distance distribution
+    description: by age
+    datasets:
+      dataset:
+        file: analysis/population/mode_share_per_age.csv
+        pivot:
+          namesTo: source
+          valuesTo: share
+          exclude:
+          - main_mode
+          - dist_group
+          - age
+        normalize:
+          target: share
+          groupBy:
+          - dist_group
+          - source
+          - age
+        rename:
+          sim_share: Sim
+          ref_share: Ref
+    traces:
+    - x: $dataset.dist_group
+      "y": $dataset.share
+      orientation: v
+      type: bar
+      name: $dataset.main_mode
+      facet_col: $dataset.age
+    layout:
+      xaxis:
+        title: Distance group
+        color: "#444"
+        type: '-'
+      barmode: stack
+      yaxis:
+        title: Share
+        color: "#444"
+        type: '-'
+    interactive: dropdown
+    multiIndex:
+      dist_group: source
+  category_header_income:
+  - type: text
+    backgroundColor: transparent
+    content: "## **Income**"
+  category_1_income:
+  - type: plotly
+    title: Mode share
+    description: by income
+    datasets:
+      dataset:
+        file: analysis/population/mode_share_per_income.csv
+        pivot:
+          namesTo: source
+          valuesTo: share
+          exclude:
+          - main_mode
+          - dist_group
+          - income
+        aggregate:
+          target: share
+          groupBy:
+          - main_mode
+          - source
+          - income
+          func: SUM
+        rename:
+          sim_share: Sim
+          ref_share: Ref
+    traces:
+    - x: $dataset.source
+      "y": $dataset.share
+      orientation: v
+      type: bar
+      name: $dataset.main_mode
+      facet_col: $dataset.income
+    layout:
+      barmode: stack
+    height: 6.0
+  category_2_income:
+  - type: plotly
+    title: Modal distance distribution
+    description: by income
+    datasets:
+      dataset:
+        file: analysis/population/mode_share_per_income.csv
+        pivot:
+          namesTo: source
+          valuesTo: share
+          exclude:
+          - main_mode
+          - dist_group
+          - income
+        normalize:
+          target: share
+          groupBy:
+          - dist_group
+          - source
+          - income
+        rename:
+          sim_share: Sim
+          ref_share: Ref
+    traces:
+    - x: $dataset.dist_group
+      "y": $dataset.share
+      orientation: v
+      type: bar
+      name: $dataset.main_mode
+      facet_col: $dataset.income
+    layout:
+      xaxis:
+        title: Distance group
+        color: "#444"
+        type: '-'
+      barmode: stack
+      yaxis:
+        title: Share
+        color: "#444"
+        type: '-'
+    interactive: dropdown
+    multiIndex:
+      dist_group: source
+  category_header_employment:
+  - type: text
+    backgroundColor: transparent
+    content: "## **Employment**"
+  category_1_employment:
+  - type: plotly
+    title: Mode share
+    description: by employment
+    datasets:
+      dataset:
+        file: analysis/population/mode_share_per_employment.csv
+        pivot:
+          namesTo: source
+          valuesTo: share
+          exclude:
+          - main_mode
+          - dist_group
+          - employment
+        aggregate:
+          target: share
+          groupBy:
+          - main_mode
+          - source
+          - employment
+          func: SUM
+        rename:
+          sim_share: Sim
+          ref_share: Ref
+    traces:
+    - x: $dataset.source
+      "y": $dataset.share
+      orientation: v
+      type: bar
+      name: $dataset.main_mode
+      facet_col: $dataset.employment
+    layout:
+      barmode: stack
+    height: 6.0
+  category_2_employment:
+  - type: plotly
+    title: Modal distance distribution
+    description: by employment
+    datasets:
+      dataset:
+        file: analysis/population/mode_share_per_employment.csv
+        pivot:
+          namesTo: source
+          valuesTo: share
+          exclude:
+          - main_mode
+          - dist_group
+          - employment
+        normalize:
+          target: share
+          groupBy:
+          - dist_group
+          - source
+          - employment
+        rename:
+          sim_share: Sim
+          ref_share: Ref
+    traces:
+    - x: $dataset.dist_group
+      "y": $dataset.share
+      orientation: v
+      type: bar
+      name: $dataset.main_mode
+      facet_col: $dataset.employment
+    layout:
+      xaxis:
+        title: Distance group
+        color: "#444"
+        type: '-'
+      barmode: stack
+      yaxis:
+        title: Share
+        color: "#444"
+        type: '-'
+    interactive: dropdown
+    multiIndex:
+      dist_group: source
+  category_header_economic_status:
+  - type: text
+    backgroundColor: transparent
+    content: "## **Economic_status**"
+  category_1_economic_status:
+  - type: plotly
+    title: Mode share
+    description: by economic_status
+    datasets:
+      dataset:
+        file: analysis/population/mode_share_per_economic_status.csv
+        pivot:
+          namesTo: source
+          valuesTo: share
+          exclude:
+          - main_mode
+          - dist_group
+          - economic_status
+        aggregate:
+          target: share
+          groupBy:
+          - main_mode
+          - source
+          - economic_status
+          func: SUM
+        rename:
+          sim_share: Sim
+          ref_share: Ref
+    traces:
+    - x: $dataset.source
+      "y": $dataset.share
+      orientation: v
+      type: bar
+      name: $dataset.main_mode
+      facet_col: $dataset.economic_status
+    layout:
+      barmode: stack
+    height: 6.0
+  category_2_economic_status:
+  - type: plotly
+    title: Modal distance distribution
+    description: by economic_status
+    datasets:
+      dataset:
+        file: analysis/population/mode_share_per_economic_status.csv
+        pivot:
+          namesTo: source
+          valuesTo: share
+          exclude:
+          - main_mode
+          - dist_group
+          - economic_status
+        normalize:
+          target: share
+          groupBy:
+          - dist_group
+          - source
+          - economic_status
+        rename:
+          sim_share: Sim
+          ref_share: Ref
+    traces:
+    - x: $dataset.dist_group
+      "y": $dataset.share
+      orientation: v
+      type: bar
+      name: $dataset.main_mode
+      facet_col: $dataset.economic_status
+    layout:
+      xaxis:
+        title: Distance group
+        color: "#444"
+        type: '-'
+      barmode: stack
+      yaxis:
+        title: Share
+        color: "#444"
+        type: '-'
+    interactive: dropdown
+    multiIndex:
+      dist_group: source
+  choice-intro:
+  - type: text
+    backgroundColor: transparent
+    content: |
+      ### **Information**
+      Note that these metrics are based on a single run and may have limited interpretability. For a more robust evaluation, consider running multiple simulations with different seeds and use metrics that consider probabilities as well.
+      (log-likelihood, Brier score, etc.)
+      For policy cases, these metrics do not have any meaning. They are solely for the base-case.
+
+      - Precision is the fraction of instances correctly classified as belonging to a specific class out of all instances the model predicted to belong to that class.
+      - Recall is the fraction of instances in a class that the model correctly classified out of all instances in that class.
+      - The macro-average computes the metric independently for each class and then take the average (hence treating all classes equally).
+      - The micro-averages of Precision, Recall and F1 score are identical to the accuracy.
+      - Cohen's Kappa is a measure of agreement between two raters that corrects for chance agreement. 1.0 indicates perfect agreement, 0.0 or less indicates agreement by chance.
+  choice:
+  - type: csv
+    title: Choice Evaluation
+    description: Metrics for mode choice.
+    dataset: analysis/population/mode_choice_evaluation.csv
+    showAllRows: true
+  - type: csv
+    title: Choice Evaluation per Mode
+    description: Metrics for choices per mode.
+    dataset: analysis/population/mode_choice_evaluation_per_mode.csv
+    showAllRows: true
+  choice-plots:
+  - type: heatmap
+    title: Confusion Matrix
+    description: Share of (mis)classified modes.
+    dataset: analysis/population/mode_confusion_matrix.csv
+    "y": True/Pred
+    xAxisTitle: Predicted
+    yAxisTitle: "True"
+    flipAxes: false
+    showLabels: true
+  - type: plotly
+    title: Mode Prediction Error
+    description: Plot showing the number of (mis)classified modes.
+    datasets:
+      dataset: analysis/population/mode_prediction_error.csv
+    traces:
+    - x: $dataset.true_mode
+      "y": $dataset.count
+      orientation: v
+      type: bar
+      name: $dataset.predicted_mode
+    layout:
+      xaxis:
+        title: True mode
+        color: "#444"
+        type: '-'
+      barmode: stack
+      yaxis:
+        title: Predicted mode count
+        color: "#444"
+        type: '-'

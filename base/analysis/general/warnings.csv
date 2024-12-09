@@ -1,0 +1,5 @@
+Module,Message
+VspConfigConsistencyCheckerImpl,"You are setting the marginal utility of traveling with mode ride to -6.88. VSP standard is to set this to zero.  Please document carefully why you are using a value different from zero, e.g. by showing distance distributions."
+VspConfigConsistencyCheckerImpl,found qsim.linkDynamics=FIFO; vsp should use PassingQ or talk to kai
+VspConfigConsistencyCheckerImpl,found `qsim.usingTravelTimeCheckInTeleporation==false'; vsp should try out `true' and report.
+VspConfigConsistencyCheckerImpl,"you are considering car abailability; vsp config is not doing that.   Instead, we are using a daily monetary constant for car."

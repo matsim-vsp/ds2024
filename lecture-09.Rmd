@@ -1,0 +1,32 @@
+```{r}
+library(tidyverse)
+library(matsim)
+
+# Read datasets ---
+for(policy_name in c("base","policy")) {
+
+  base_url <- str_c("https://svn.vsp.tu-berlin.de/repos/public-svn/matsim/tutorial/datascience2024/matsim_outputs/output-1pct/", policy_name, "/berlin-v6.3.output_")
+  
+  for(dataset_name in c("persons", "activities", "trips", "legs")) {
+    destfile <- str_c(dataset_name, ".csv.gz") 
+    url <- stringr::str_c(base_url, destfile)
+    download.file(url, destfile)
+
+    assign(str_c(policy_name, "_", dataset_name), 
+          read_delim(gzfile(destfile)))
+  }
+  
+  # Read matsim network links
+  download.file(str_c(base_url, "network.xml.gz"), str_c(policy_name, "_", "network.xml.gz"))
+ 
+  assign(str_c(policy_name, "_network"),
+         matsim::read_network(str_c(policy_name, "_", "network.xml.gz")))
+  
+}
+
+
+
+
+
+```
+

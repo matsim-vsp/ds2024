@@ -1,0 +1,6 @@
+Info,Value
+Accuracy,0.45842
+Precision (macro avg.),0.43142
+Recall (macro avg.),0.3683
+F1 Score (macro avg.),0.35739
+Cohen’s Kappa,0.28115

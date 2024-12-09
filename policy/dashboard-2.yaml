@@ -1,0 +1,399 @@
+header:
+  title: Traffic Counts
+  description: |-
+    Comparison of observed and simulated daily traffic volumes.
+    Error metrics: major under: < 0.60; under: 0.60 - 0.80; ok: 0.80 - 1.20; over: 1.20 - 1.40; major over: > 1.40
+subtabs:
+- title: Car
+  rows:
+  - overview_car
+  - scatter_car
+  - map_car
+  - details_car
+- title: Truck
+  rows:
+  - overview_truck
+  - scatter_truck
+  - map_truck
+  - details_truck
+layout:
+  overview_car:
+  - type: plotly
+    title: Count estimation quality
+    description: over all count stations
+    datasets:
+      dataset:
+        file: analysis/traffic-car/count_comparison_quality.csv
+        constant:
+          source: ""
+        aggregate:
+          target: "n"
+          groupBy:
+          - quality
+          func: SUM
+    traces:
+    - x: $dataset.n
+      "y": $dataset.source
+      orientation: h
+      type: bar
+      name: $dataset.quality
+      colorRamp: RdYlBu
+    layout:
+      xaxis:
+        title: Number
+        color: "#444"
+        type: '-'
+      barmode: stack
+  - type: plotly
+    title: Count estimation quality
+    description: by road type
+    datasets:
+      dataset: analysis/traffic-car/count_comparison_quality.csv
+    traces:
+    - x: $dataset.road_type
+      "y": $dataset.share
+      orientation: v
+      type: bar
+      name: $dataset.quality
+      colorRamp: RdYlBu
+    layout:
+      barmode: stack
+      yaxis:
+        title: Share
+        color: "#444"
+        type: '-'
+  scatter_car:
+  - type: plotly
+    title: Traffic volumes by hour
+    description: simulated vs. observed
+    datasets:
+      dataset: analysis/traffic-car/count_comparison_by_hour.csv
+    traces:
+    - fill: none
+      "y": $dataset.simulated_traffic_volume
+      x: $dataset.observed_traffic_volume
+      mode: markers
+      whiskerwidth: 0.0
+      type: scatter
+      name: $dataset.hour
+      text: $dataset.name
+    layout:
+      xaxis:
+        title: Observed traffic count
+        color: "#444"
+        type: '-'
+      yaxis:
+        title: Simulated traffic count
+        color: "#444"
+        type: '-'
+    height: 8.0
+    fixedRatio: true
+    interactive: slider
+  - type: plotly
+    title: Daily traffic volumes
+    description: simulated vs. observed
+    datasets:
+      dataset: analysis/traffic-car/count_comparison_daily.csv
+    traces:
+    - fill: none
+      "y": $dataset.simulated_traffic_volume
+      x: $dataset.observed_traffic_volume
+      mode: markers
+      whiskerwidth: 0.0
+      type: scatter
+      name: $dataset.road_type
+      text: $dataset.name
+    layout:
+      xaxis:
+        title: Observed traffic count
+        color: "#444"
+        type: '-'
+      yaxis:
+        title: Simulated traffic count
+        color: "#444"
+        type: '-'
+    height: 8.0
+    fixedRatio: true
+  map_car:
+  - type: map
+    title: Relative traffic volumes
+    height: 8.0
+    center:
+    - 13.39
+    - 52.51
+    zoom: 9.1
+    display:
+      lineWidth:
+        dataset: '@8'
+      lineColor:
+        dataset: counts
+        columnName: quality
+        join: link_id
+        colorRamp:
+          ramp: RdYlBu
+          steps: 5
+          reverse: false
+      fill: {}
+      fillHeight: {}
+      radius: {}
+    shapes:
+      file: analysis/network/network.avro
+      join: id
+    datasets:
+      counts: analysis/traffic-car/count_comparison_daily.csv
+  - type: plotly
+    title: Avg. error / bias
+    datasets:
+      dataset: analysis/traffic-car/count_error_by_hour.csv
+    traces:
+    - fill: none
+      "y": $dataset.mean_rel_error
+      x: $dataset.hour
+      mode: lines
+      whiskerwidth: 0.0
+      type: scatter
+      name: Mean rel. error
+      original_name: Mean rel. error
+    - fill: none
+      "y": $dataset.mean_abs_error
+      x: $dataset.hour
+      mode: lines
+      yaxis: y2
+      whiskerwidth: 0.0
+      type: scatter
+      name: Mean abs. error
+      original_name: Mean abs. error
+    - fill: none
+      "y": $dataset.mean_bias
+      x: $dataset.hour
+      mode: lines
+      yaxis: y2
+      whiskerwidth: 0.0
+      type: scatter
+      name: Mean bias
+      original_name: Mean bias
+    layout:
+      xaxis:
+        title: Hour
+        color: "#444"
+        type: '-'
+      yaxis2:
+        title: "Mean (abs.) error [veh/h]"
+        color: "#444"
+        type: '-'
+        side: right
+        overlaying: "y"
+      yaxis:
+        title: "Mean rel. error [%]"
+        color: "#444"
+        type: '-'
+  details_car:
+  - type: plotly
+    title: Count stations
+    description: hourly comparison
+    datasets:
+      dataset: analysis/traffic-car/count_comparison_by_hour.csv
+    traces:
+    - x: $dataset.hour
+      "y": $dataset.simulated_traffic_volume
+      orientation: v
+      type: bar
+      name: $dataset.name
+      original_name: Simulated
+    - x: $dataset.hour
+      "y": $dataset.observed_traffic_volume
+      orientation: v
+      type: bar
+      name: $dataset.name
+      original_name: Observed
+    interactive: dropdown
+  overview_truck:
+  - type: plotly
+    title: Count estimation quality
+    description: over all count stations
+    datasets:
+      dataset:
+        file: analysis/traffic-truck/count_comparison_quality.csv
+        constant:
+          source: ""
+        aggregate:
+          target: "n"
+          groupBy:
+          - quality
+          func: SUM
+    traces:
+    - x: $dataset.n
+      "y": $dataset.source
+      orientation: h
+      type: bar
+      name: $dataset.quality
+      colorRamp: RdYlBu
+    layout:
+      xaxis:
+        title: Number
+        color: "#444"
+        type: '-'
+      barmode: stack
+  - type: plotly
+    title: Count estimation quality
+    description: by road type
+    datasets:
+      dataset: analysis/traffic-truck/count_comparison_quality.csv
+    traces:
+    - x: $dataset.road_type
+      "y": $dataset.share
+      orientation: v
+      type: bar
+      name: $dataset.quality
+      colorRamp: RdYlBu
+    layout:
+      barmode: stack
+      yaxis:
+        title: Share
+        color: "#444"
+        type: '-'
+  scatter_truck:
+  - type: plotly
+    title: Traffic volumes by hour
+    description: simulated vs. observed
+    datasets:
+      dataset: analysis/traffic-truck/count_comparison_by_hour.csv
+    traces:
+    - fill: none
+      "y": $dataset.simulated_traffic_volume
+      x: $dataset.observed_traffic_volume
+      mode: markers
+      whiskerwidth: 0.0
+      type: scatter
+      name: $dataset.hour
+      text: $dataset.name
+    layout:
+      xaxis:
+        title: Observed traffic count
+        color: "#444"
+        type: '-'
+      yaxis:
+        title: Simulated traffic count
+        color: "#444"
+        type: '-'
+    height: 8.0
+    fixedRatio: true
+    interactive: slider
+  - type: plotly
+    title: Daily traffic volumes
+    description: simulated vs. observed
+    datasets:
+      dataset: analysis/traffic-truck/count_comparison_daily.csv
+    traces:
+    - fill: none
+      "y": $dataset.simulated_traffic_volume
+      x: $dataset.observed_traffic_volume
+      mode: markers
+      whiskerwidth: 0.0
+      type: scatter
+      name: $dataset.road_type
+      text: $dataset.name
+    layout:
+      xaxis:
+        title: Observed traffic count
+        color: "#444"
+        type: '-'
+      yaxis:
+        title: Simulated traffic count
+        color: "#444"
+        type: '-'
+    height: 8.0
+    fixedRatio: true
+  map_truck:
+  - type: map
+    title: Relative traffic volumes
+    height: 8.0
+    center:
+    - 13.39
+    - 52.51
+    zoom: 9.1
+    display:
+      lineWidth:
+        dataset: '@8'
+      lineColor:
+        dataset: counts
+        columnName: quality
+        join: link_id
+        colorRamp:
+          ramp: RdYlBu
+          steps: 5
+          reverse: false
+      fill: {}
+      fillHeight: {}
+      radius: {}
+    shapes:
+      file: analysis/network/network.avro
+      join: id
+    datasets:
+      counts: analysis/traffic-truck/count_comparison_daily.csv
+  - type: plotly
+    title: Avg. error / bias
+    datasets:
+      dataset: analysis/traffic-truck/count_error_by_hour.csv
+    traces:
+    - fill: none
+      "y": $dataset.mean_rel_error
+      x: $dataset.hour
+      mode: lines
+      whiskerwidth: 0.0
+      type: scatter
+      name: Mean rel. error
+      original_name: Mean rel. error
+    - fill: none
+      "y": $dataset.mean_abs_error
+      x: $dataset.hour
+      mode: lines
+      yaxis: y2
+      whiskerwidth: 0.0
+      type: scatter
+      name: Mean abs. error
+      original_name: Mean abs. error
+    - fill: none
+      "y": $dataset.mean_bias
+      x: $dataset.hour
+      mode: lines
+      yaxis: y2
+      whiskerwidth: 0.0
+      type: scatter
+      name: Mean bias
+      original_name: Mean bias
+    layout:
+      xaxis:
+        title: Hour
+        color: "#444"
+        type: '-'
+      yaxis2:
+        title: "Mean (abs.) error [veh/h]"
+        color: "#444"
+        type: '-'
+        side: right
+        overlaying: "y"
+      yaxis:
+        title: "Mean rel. error [%]"
+        color: "#444"
+        type: '-'
+  details_truck:
+  - type: plotly
+    title: Count stations
+    description: hourly comparison
+    datasets:
+      dataset: analysis/traffic-truck/count_comparison_by_hour.csv
+    traces:
+    - x: $dataset.hour
+      "y": $dataset.simulated_traffic_volume
+      orientation: v
+      type: bar
+      name: $dataset.name
+      original_name: Simulated
+    - x: $dataset.hour
+      "y": $dataset.observed_traffic_volume
+      orientation: v
+      type: bar
+      name: $dataset.name
+      original_name: Observed
+    interactive: dropdown

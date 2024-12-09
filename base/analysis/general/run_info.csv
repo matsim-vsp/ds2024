@@ -1,0 +1,10 @@
+info,value
+JVM,"21.0.2; Oracle Corporation; mixed mode, sharing; 64-bit"
+OS,Linux; 6.1.58-1.el8.x86_64; amd64
+CPU cores,8
+max. Memory,30208.0MB (31675383808B)
+MATSim-Build,r8ddacdf344c2a6067f66b2886afda1d767c7b0eb (2024-07-04 18:15:53)
+Command,org.matsim.run.OpenBerlinScenario run --1pct --config:controller.outputDirectory output-1pct/base/
+Start,2024-09-04 16:59:46
+End,2024-09-05 05:07:46
+Duration,12 hours 8 minutes
