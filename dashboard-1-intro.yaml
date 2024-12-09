@@ -1,0 +1,64 @@
+header:
+  title: "SimWrapper Dashboard by Billy!"
+  tab: "Tab 1"
+  description: "Data Science 2024/2025 class"
+  fullscreen: true
+
+layout:
+    # You can remove this row once you have your own dashboard sections
+    row2:
+        type: map
+        title: "File: berlin-v6.3.output_network.xml.gz"
+        zoom: 10.4
+        center:
+            - 13.46
+            - 52.48
+        shapes: berlin-v6.3.output_network.xml.gz
+        datasets:
+            traffic_stats_by_link_daily_base:
+                file: "traffic_stats_by_link_daily_base.csv"
+        display:
+            lineColor:
+                dataset: traffic_stats_by_link_daily_base
+                columnName: road_capacity_utilization
+                join: link_id
+                colorRamp:
+                    ramp: Plasma
+                    steps: 7
+            lineWidth:
+                dataset: traffic_stats_by_link_daily_base
+                columnName: vol_car
+                join: link_id
+                scaleFactor: 5000
+        backgroundLayers: {}
+
+
+    diffRow:
+        type: map
+        title: "File: berlin-v6.3.output_network.xml.gz"
+        zoom: 11.1
+        center:
+            - 13.41
+            - 52.51
+        shapes: berlin-v6.3.output_network.xml.gz
+        datasets:
+            traffic_stats_by_link_daily_base: traffic_stats_by_link_daily_base.csv
+            traffic_stats_by_link_daily_policy:
+                file: "traffic_stats_by_link_daily_policy.csv"
+        display:
+            lineColor:
+                diff: traffic_stats_by_link_daily_policy - traffic_stats_by_link_daily_base
+                columnName: vol_car
+                join: link_id
+                colorRamp:
+                    ramp: RdBu
+                    reverse: true
+                    steps: 5
+            lineWidth:
+                diff: traffic_stats_by_link_daily_policy - traffic_stats_by_link_daily_base
+                columnName: vol_car
+                join: link_id
+                scaleFactor: 1000
+        backgroundLayers: {}
+
+
